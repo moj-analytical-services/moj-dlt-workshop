@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "moj-dlt-workshop"
+version = "0.1.0"
+description = ""
+authors = ["matt-heery <matt.heery@digital.justice.gov.uk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+typer = "^0.12.5"
+pathlib = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
