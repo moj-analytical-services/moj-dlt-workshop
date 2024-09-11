@@ -388,6 +388,14 @@ example_pipeline_2 = dlt.pipeline(
     dataset_name="synthetic_nonsense_duckdb_data",
     destination=dlt_destinations.athena(staging="s3://gw-dlt/{your_name}/athena_stg")
 )
+
+example_pipeline_2.run(
+    read_json_parquet_from_local_filesystem(
+        "synthetic",
+        "s3://gw-dlt/{your_name}/raw_history/",
+        "*.parquet*"
+    ),
+)
 ```
 
 
