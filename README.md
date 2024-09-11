@@ -158,7 +158,7 @@ logger = logging.getLogger("dlt")
 
 # Set the log level
 logger.setLevel(logging.INFO)
-@dlt.resource(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
+@dlt.source
 def read_json_from_local_filesystem(
     table_name: str,
     folder_name: str,
@@ -368,6 +368,19 @@ python3 python_apps/data_generator.py --new-data
 python3 main.py
 ```
 and it should only pull through the final 1000 rows of data into the filesystem.
+
 ## Step Seven: Utilise this with AWS
+
+Now, it would be great to utilise dlt to read and write not to duckdb, but to Athena, as that is what we use at MOJ.
+
+If you have permissions to the AWS Data Engineering Sandbox account, store your creds in your local environment via ,for example, aws vault:
+```bash
+aws-vault exec your-profile-name
+```
+then, we just need to edit our destinations for our pipelines:
+
+```python
+destination_fs = dlt_destinations.filesystem(bucket_url="s3://gw-dlt/{your_name}/raw_history/")
+s```
 
 ## Step Eight: Replicate all of this using moj-dlt and a yaml file
