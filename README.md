@@ -62,9 +62,9 @@ should work. This will pull from dlt's verified sources repo and clone the code 
 
 In this case, our destination is going to be `filesystem` (for now locally) as we are writing to parquet format.
 
-I will from here assume if your source is `filesystem`:
+I will from here assume your source is `filesystem`.
 
-Look at the file `filesystem/readers.py`, this nicely defines some neat functions to read csvs and json files: we can utilise these.
+Look at the file `filesystem/readers.py`. This nicely defines some neat functions to read csv and json files for us to utilise.
 
 ```python
 def _read_jsonl(
@@ -167,9 +167,13 @@ Using this source we can easily set up a dlt pipeline.
 
 ## Step Three: Set up your dlt pipeline
 
-Setting up a dlt pipeline is relatively straight forward, using the `dlt.pipeline` functionality.
+Setting up a dlt pipeline is relatively straightforward, using the `dlt.pipeline` functionality.
 
-You need to define a few things including: the name of the pipeline, the destination, the dataset name (optionally is the same as the pipeline name), and then a number of optional arguments you can add.
+You need to define a few things including the:
+- name of the pipeline
+- destination
+- dataset name (optionally is the same as the pipeline name)
+- optional arguments
 
 For example to set up writing to a local raw history folder you would need to set up a destination `filesystem`:
 
