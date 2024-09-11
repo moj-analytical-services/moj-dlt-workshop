@@ -167,9 +167,28 @@ Using this source we can easily set up a dlt pipeline.
 
 ## Step Three: Set up your dlt pipeline
 
+Setting up a dlt pipeline is relatively straight forward, using the `dlt.pipeline` functionality.
 
+You need to define a few things including: the name of the pipeline, the destination, the dataset name (optionally is the same as the pipeline name), and then a number of optional arguments you can add.
+
+For example to set up writing to a local raw history folder you would need to set up a destination `filesystem`:
+
+```python
+destination_fs = filesystem(bucket_url="raw_history/")
+```
+then we can create our pipeline (notice we just define the destination, not the source here):
+
+```python
+example_pipeline = dlt.pipeline(
+    pipeline_name="test_pipeline",
+    dataset_name="synthetic_nonsense_data",
+    destination=destination_fs
+)
+```
 
 ## Step Four: Run your dlt pipeline (and again!)
+
+To run a dlt pipeline you now need to define your data you are running the pipeline with
 
 ## Step Five: Utilise this with AWS
 
