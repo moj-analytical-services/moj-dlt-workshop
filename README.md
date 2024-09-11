@@ -381,6 +381,14 @@ then, we just need to edit our destinations for our pipelines:
 
 ```python
 destination_fs = dlt_destinations.filesystem(bucket_url="s3://gw-dlt/{your_name}/raw_history/")
-s```
+```
+```python
+example_pipeline_2 = dlt.pipeline(
+    pipeline_name="test_pipeline_2",
+    dataset_name="synthetic_nonsense_duckdb_data",
+    destination=dlt_destinations.athena(staging="s3://gw-dlt/{your_name}/athena_stg")
+)
+```
+
 
 ## Step Eight: Replicate all of this using moj-dlt and a yaml file
