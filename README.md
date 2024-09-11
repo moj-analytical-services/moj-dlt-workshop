@@ -197,9 +197,9 @@ To run a dlt pipeline you now need to define your data you are running the pipel
 ```python
 example_pipeline.run(
     read_json_from_local_filesystem(
-        your_table_name,
-        your_folder_name,
-        your_file_name
+        "synthetic_data",
+        "raw_data",
+        "*.jsonl"
     )
 )
 ```
@@ -296,7 +296,7 @@ Obviously, this is not ideal behaviour. We want to utilise dlt's interpretation 
 
 We're gonna need this twice, once for the first pipeline and once for the second.
 
-To do this, we will need to tweak our `dlt.source`
+To do this, we will need to tweak our `dlt.source` to allow us to read the file's metadata:
 
 ```python
 from .filesystem import _read_jsonl, _read_parquet, filesystem
@@ -335,12 +335,30 @@ example_pipeline.run(
 )
 ```
 
+for the second pipeline, we need to run it based on a custom column that dlt adds, `_dlt_load_id`.
+
+To do that:
+
+```python
+parquet_source = read_json_parquet_from_local_filesystem(
+        your_table_name,
+        your_parquet_folder_name,
+        your_parquet_file_name
+    )
+for source in parquet_source.resources:
+    run_source.resources[source].apply_hints(
+        incremental=dlt.sources.incremental("_dlt_load_id")
+        )
+
+example_pipeline_2.run(run_source)
+```
+
 then re-run the data generation and the pipeline
 ```bash
 python3 python_apps/data_generator.py --new-data
 python3 main.py
 ```
-and it should 
-## Utilise this with AWS
+and it should only pull through the final 1000 rows of data into the filesystem.
+## Step Seven: Utilise this with AWS
 
-## Step Seven: Replicate all of this using moj-dlt and a yaml file
+## Step Eight: Replicate all of this using moj-dlt and a yaml file
