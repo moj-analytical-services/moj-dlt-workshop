@@ -158,7 +158,7 @@ def read_json_from_local_filesystem(
     yield filesystem(
             bucket_url=folder_name,
             file_glob=file_name
-        ) | dlt.transformer(name=table_name)(_read_json)
+        ) | dlt.transformer(name=table_name)(_read_jsonl)
 ```
 
 All we've done here is create a dlt source where you can define the name for your table, where the folder is locally, and what the name of the file in that folder you want to read is. Of course, we could set up everything more generally (a bit like the readers function is set up), but this is an example to hopefully show how the functionality of dlt works.
@@ -188,7 +188,38 @@ example_pipeline = dlt.pipeline(
 
 ## Step Four: Run your dlt pipeline (and again!)
 
-To run a dlt pipeline you now need to define your data you are running the pipeline with
+To run a dlt pipeline you now need to define your data you are running the pipeline with and then use the run function to run it. For example for the pipeline above:
+
+```python
+example_pipeline.run(
+    read_json_from_local_filesystem(
+        your_table_name,
+        your_folder_name,
+        your_file_name
+    )
+)
+```
+
+This will just move files from a to b (a bit pointless!), remember we wanted to change the files to our preferred file format (parquet), so let's define that in our run:
+
+```python
+example_pipeline.run(
+    read_json_from_local_filesystem(
+        your_table_name,
+        your_folder_name,
+        your_file_name
+    ),
+    loader_file_format="parquet"
+)
+```
+
+Now if you run in bash,
+
+```bash
+python3 your_pipeline_file_name.py
+```
+
+You should see the running of a dlt pipeline, and then the output of parquet in another folder.
 
 ## Step Five: Utilise this with AWS
 
