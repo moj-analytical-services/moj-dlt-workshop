@@ -51,7 +51,7 @@ This will generate a folder `raw_data` with a file `synthetic_data_0.jsonl` insi
 
 Note that your source is also called `filesystem`.
 
-## Step Two: Set up your dlt pipeline
+## Step Two: Set up your dlt source
 
 You should now have some data set up that you can access. The next step is a bit dependent on what source you have, but effectively running:
 
@@ -149,7 +149,7 @@ Let us stick that all together to define a resource that just read our local jso
 ```python
 from .filesystem import readers, filesystem
 
-@dlt.source(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
+@dlt.resource(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
 def read_json_from_local_filesystem(
     table_name: str,
     folder_name: str,
@@ -161,16 +161,16 @@ def read_json_from_local_filesystem(
         ) | dlt.transformer(name=table_name)(_read_json)
 ```
 
-All we've done here is create a dlt source where you can define the name for your table, where the folder is locally, and what the name of the file in that folder you want to read is.
+All we've done here is create a dlt source where you can define the name for your table, where the folder is locally, and what the name of the file in that folder you want to read is. Of course, we could set up everything more generally (a bit like the readers function is set up), but this is an example to hopefully show how the functionality of dlt works.
 
 Using this source we can easily set up a dlt pipeline.
 
+## Step Three: Set up your dlt pipeline
 
 
-## Step Three: Run your dlt pipeline (and again!)
 
+## Step Four: Run your dlt pipeline (and again!)
 
-## Step Four: Evaluate your dlt pipeline
-
+## Step Five: Utilise this with AWS
 
 ## Step Five: Replicate all of this using moj-dlt and a yaml file
