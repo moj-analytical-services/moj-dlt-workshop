@@ -147,8 +147,17 @@ The `readers` function in here is a `dlt.source` (i.e. a group of resources) tha
 Let us stick that all together to define a resource that just read our local json files into memory using the `filesystem` and `_read_json` functions from above:
 
 ```python
-from .filesystem import readers, filesystem
+from filesystem import filesystem
+from filesystem.readers import _read_jsonl
+import dlt
+import dlt.destinations as dlt_destinations
+import logging
 
+# Create a logger
+logger = logging.getLogger("dlt")
+
+# Set the log level
+logger.setLevel(logging.INFO)
 @dlt.resource(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
 def read_json_from_local_filesystem(
     table_name: str,
