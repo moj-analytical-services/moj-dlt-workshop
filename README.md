@@ -220,7 +220,7 @@ example_pipeline.run(
 Now if you run in bash,
 
 ```bash
-python3 your_pipeline_file_name.py
+python3 main.py
 ```
 
 You should see the running of a dlt pipeline, and then the output of parquet in another folder.
@@ -271,7 +271,7 @@ example_pipeline_2.run(
 ```
 again running:
 ```bash
-python3 your_pipeline_file_name.py
+python3 main.py
 ```
 Should output a duckdb file locally.
 
@@ -288,13 +288,59 @@ python3 python_apps/data_generator.py --new-data
 This will generate a new file of data for you, if you then run the dlt pipeline again, and check how many rows it loads:
 
 ```bash
-python3 your_pipeline_file_name.py
+python3 main.py
 ```
 you should see that it loads both files to both the filesystem and the duckdb location again.
 
 Obviously, this is not ideal behaviour. We want to utilise dlt's interpretation of incremental loading.
 
+We're gonna need this twice, once for the first pipeline and once for the second.
 
+To do this, we will need to tweak our `dlt.source`
+
+```python
+from .filesystem import _read_jsonl, _read_parquet, filesystem
+
+@dlt.source(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
+def read_json_parquet_from_local_filesystem(
+    table_name: str,
+    folder_name: str,
+    file_name: str,
+    incremental_load: str = None,
+    ):
+    fs = filesystem(
+            bucket_url=folder_name,
+            file_glob=file_name
+        )
+    fs.apply_hints(
+        incremental=dlt.sources.incremental(incremental_load)
+    )
+    yield (
+        fs | dlt.transformer(name=table_name)(_read_jsonl),
+        fs | dlt.transformer(name=table_name)(_read_parquet)
+)
+```
+where we've added an argument for how we're going to incremental load.
+
+So, for the first pipeline, let us add an incremental load based on modified date of the file (this is dlt's custom field regardless of what type of filesystem you are in):
+
+```python
+example_pipeline.run(
+    read_json_from_local_filesystem(
+        your_table_name,
+        your_folder_name,
+        your_file_name,
+        incremental_load="modified_date"
+    )
+)
+```
+
+then re-run the data generation and the pipeline
+```bash
+python3 python_apps/data_generator.py --new-data
+python3 main.py
+```
+and it should 
 ## Utilise this with AWS
 
 ## Step Seven: Replicate all of this using moj-dlt and a yaml file
