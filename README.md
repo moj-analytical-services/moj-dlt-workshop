@@ -186,7 +186,7 @@ example_pipeline = dlt.pipeline(
 )
 ```
 
-## Step Four: Run your dlt pipeline (and again!)
+## Step Four: Run your dlt pipeline
 
 To run a dlt pipeline you now need to define your data you are running the pipeline with and then use the run function to run it. For example for the pipeline above:
 
@@ -221,6 +221,76 @@ python3 your_pipeline_file_name.py
 
 You should see the running of a dlt pipeline, and then the output of parquet in another folder.
 
-## Step Five: Utilise this with AWS
+## Step Five: Create a second pipeline with a  DuckDB Output
 
-## Step Five: Replicate all of this using moj-dlt and a yaml file
+Now we want to output in a SQL format, so let us create a second pipeline to a duckdb output.
+
+This is going to mostly be the same as before, except we're going to edit our filesystem to include reading of our (newly written) parquet files.
+
+```python
+from .filesystem import _read_jsonl, _read_parquet, filesystem
+
+@dlt.source(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
+def read_json_parquet_from_local_filesystem(
+    table_name: str,
+    folder_name: str,
+    file_name: str
+    ):
+    yield (
+        filesystem(
+            bucket_url=folder_name,
+            file_glob=file_name
+        ) | dlt.transformer(name=table_name)(_read_jsonl),
+        filesystem(
+            bucket_url=folder_name,
+            file_glob=file_name
+        ) | dlt.transformer(name=table_name)(_read_parquet)
+)
+```
+
+and now a new example pipeline:
+
+```python
+example_pipeline_2 = dlt.pipeline(
+    pipeline_name="test_pipeline_2",
+    dataset_name="synthetic_nonsense_duckdb_data",
+    destination=duckdb(path="test_data.duckdb")
+)
+
+example_pipeline_2.run(
+    read_json_parquet_from_local_filesystem(
+        your_table_name,
+        your_parquet_folder_name,
+        your_parquet_file_name
+    ),
+)
+```
+again running:
+```bash
+python3 your_pipeline_file_name.py
+```
+Should output a duckdb file locally.
+
+## Step Six: Incremental loading
+
+Now, what happens if you get more data in the same pipeline?
+
+If you run the generate data app again, with a new flag to generate another file:
+
+```bash
+python3 python_apps/data_generator.py --new-data
+```
+
+This will generate a new file of data for you, if you then run the dlt pipeline again, and check how many rows it loads:
+
+```bash
+python3 your_pipeline_file_name.py
+```
+you should see that it loads both files to both the filesystem and the duckdb location again.
+
+Obviously, this is not ideal behaviour. We want to utilise dlt's interpretation of incremental loading.
+
+
+## Utilise this with AWS
+
+## Step Seven: Replicate all of this using moj-dlt and a yaml file
