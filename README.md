@@ -144,7 +144,7 @@ The `readers` function in here is a `dlt.source` (i.e. a group of resources) tha
     | dlt.transformer(name="read_jsonl")(_read_jsonl),
 ```
 
-Let us stick that all together to define a resource that just read our local json files into memory using the `filesystem` and `_read_json` functions from above:
+Let us stick that all together to define a resource that just read our local json files into memory using the `filesystem` and `_read_json` functions from above. Create a `main.py` file and enter the following:
 
 ```python
 from filesystem import filesystem
@@ -187,7 +187,7 @@ You need to define a few things including the:
 For example to set up writing to a local raw history folder you would need to set up a destination `filesystem`:
 
 ```python
-destination_fs = filesystem(bucket_url="raw_history/")
+destination_fs = dlt_destinations.filesystem(bucket_url="raw_history/")
 ```
 then we can create our pipeline (notice we just define the destination, not the source here):
 
@@ -217,11 +217,7 @@ This will just move files from a to b (a bit pointless!), remember we wanted to 
 
 ```python
 example_pipeline.run(
-    read_json_from_local_filesystem(
-        your_table_name,
-        your_folder_name,
-        your_file_name
-    ),
+    read_json_from_local_filesystem("synthetic", "raw_data", "*.jsonl"),
     loader_file_format="parquet"
 )
 ```
