@@ -379,12 +379,12 @@ example_pipeline_2 = dlt.pipeline(
     destination=dlt_destinations.athena(
         query_result_bucket="s3://mojap-athena-query-dump-sandbox/",
         force_iceberg=True
-    )
+    ),
     staging=dlt_destinations.filesystem("s3://dlt-workshop/{your_name}/athena_stg")
 )
 
 example_pipeline_2.run(
-    read_json_parquet_from_local_filesystem(
+    read_parquet_from_local_filesystem(
         "synthetic",
         "s3://dlt-workshop/{your_name}/raw_history/",
         "*.parquet"
