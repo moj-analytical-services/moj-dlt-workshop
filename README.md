@@ -216,10 +216,12 @@ example_pipeline.run(
 This will just move files from a to b (a bit pointless!), remember we wanted to change the files to our preferred file format (parquet), so let's define that in our run:
 
 ```python
-example_pipeline.run(
+load_info_1 = example_pipeline.run(
     read_json_from_local_filesystem("synthetic", "raw_data", "*.jsonl"),
-    loader_file_format="parquet"
+    loader_file_format="parquet",
 )
+
+logger.info(load_info_1)
 ```
 
 Now if you run in bash,
@@ -260,9 +262,13 @@ example_pipeline_2 = dlt.pipeline(
     destination=dlt_destinations.duckdb(path="test_data.duckdb")
 )
 
-example_pipeline_2.run(
-    read_json_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
+load_info_2 = example_pipeline_2.run(
+    read_parquet_from_local_filesystem(
+        "synthetic", "raw_history/synthetic_nonsense_data/synthetic", "*.parquet"
+    ),
 )
+
+logger.info(load_info_2)
 ```
 again running:
 ```bash
