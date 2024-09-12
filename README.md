@@ -160,13 +160,14 @@ logger = logging.getLogger("dlt")
 logger.setLevel(logging.INFO)
 @dlt.source
 def read_json_from_local_filesystem(
+    table_name: str,
     folder_name: str,
     file_name: str
     ):
     yield filesystem(
             bucket_url=folder_name,
             file_glob=file_name
-        ) | dlt.transformer(name="read_json")(_read_jsonl)
+        ) | dlt.transformer(name=table_name)(_read_jsonl)
 ```
 
 All we've done here is create a dlt source where you can define the name for your table, where the folder is locally, and what the name of the file in that folder you want to read is. Of course, we could set up everything more generally (a bit like the readers function is set up), but this is an example to hopefully show how the functionality of dlt works.
@@ -240,13 +241,14 @@ from filesystem.readers import _read_jsonl, _read_parquet
 
 @dlt.source
 def read_parquet_from_local_filesystem(
+    table_name: str,
     folder_name: str,
     file_name: str
     ):
     yield filesystem(
             bucket_url=folder_name,
             file_glob=file_name
-        ) | dlt.transformer(name="read_parquet")(_read_parquet)
+        ) | dlt.transformer(name=table_name)(_read_parquet)
 ```
 
 and now a new example pipeline:
