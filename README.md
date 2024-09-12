@@ -322,16 +322,17 @@ def read_jsonl_from_local_filesystem(
 ```
 where we've added an argument for how we're going to incremental load.
 
-So, for the first pipeline, let us add an incremental load based on modified date of the file (this is dlt's custom field regardless of what type of filesystem you are in):
+So, for the first pipeline, let us replace what we've written earlier adding an incremental load based on modified date of the file (this is dlt's custom field regardless of what type of filesystem you are in). 
 
 ```python
 example_pipeline.run(
     read_json_from_local_filesystem(
-        your_table_name,
-        your_folder_name,
-        your_file_name,
+        "synthetic_data",
+        "raw_data",
+        "*.jsonl",
         incremental_load="modified_date"
-    )
+    ),
+    loader_file_format="parquet"
 )
 ```
 
