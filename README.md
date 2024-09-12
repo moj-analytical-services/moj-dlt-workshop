@@ -217,7 +217,7 @@ This will just move files from a to b (a bit pointless!), remember we wanted to 
 
 ```python
 load_info_1 = example_pipeline.run(
-    read_json_from_local_filesystem("synthetic", "raw_data", "*.jsonl"),
+    read_jsonl_from_local_filesystem("synthetic", "raw_data", "*.jsonl"),
     loader_file_format="parquet",
 )
 
@@ -302,8 +302,8 @@ To do this, we will need to add a new `dlt.source` to allow us to read the file'
 ```python
 from .filesystem import _read_jsonl, _read_parquet, filesystem
 
-@dlt.source(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
-def read_parquet_from_local_filesystem(
+@dlt.source
+def read_jsonl_from_local_filesystem(
     table_name: str,
     folder_name: str,
     file_name: str,
@@ -317,7 +317,7 @@ def read_parquet_from_local_filesystem(
         incremental=dlt.sources.incremental(incremental_load)
     )
     yield (
-        fs | dlt.transformer(name=table_name)(_read_parquet)
+        fs | dlt.transformer(name=table_name)(_read_jsonl)
     )
 ```
 where we've added an argument for how we're going to incremental load.
@@ -392,3 +392,4 @@ example_pipeline_2.run(
 
 ## Step Eight: Replicate all of this using moj-dlt and a yaml file
 
+Now we have created two pipelines, one for local development to check that what we are doing to the data is actually possible, and one in AWS in dev that tests the end to end capability to check that we can run it in AWS. In create a data task, we have this exact capability! If you head to the create a data task repo and check the `workshop.yaml` file, this shows a configuration of doing exactly what we've set up today.
