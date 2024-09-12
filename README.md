@@ -343,11 +343,11 @@ To do that:
 ```python
 parquet_source = read_json_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
 for source in parquet_source.resources:
-    run_source.resources[source].apply_hints(
+    parquet_source.resources[source].apply_hints(
         incremental=dlt.sources.incremental("_dlt_load_id")
         )
 
-example_pipeline_2.run(run_source)
+example_pipeline_2.run(parquet_source)
 ```
 
 then re-run the data generation and the pipeline
