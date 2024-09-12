@@ -341,13 +341,15 @@ for the second pipeline, we need to run it based on a custom column that dlt add
 To do that:
 
 ```python
-parquet_source = read_json_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
+parquet_source = read_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
 for source in parquet_source.resources:
     parquet_source.resources[source].apply_hints(
         incremental=dlt.sources.incremental("_dlt_load_id")
         )
-
-example_pipeline_2.run(parquet_source)
+```
+and then, 
+```python
+load_info_2 = example_pipeline_2.run(parquet_source)
 ```
 
 then re-run the data generation and the pipeline
