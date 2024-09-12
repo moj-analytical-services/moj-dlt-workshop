@@ -330,7 +330,7 @@ example_pipeline.run(
         "synthetic_data",
         "raw_data",
         "*.jsonl",
-        incremental_load="modified_date"
+        incremental_load="modification_date"
     ),
     loader_file_format="parquet"
 )
