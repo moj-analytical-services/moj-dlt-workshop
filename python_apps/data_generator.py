@@ -122,7 +122,7 @@ def trim_data(data, file_index, number_of_rows):
 # Function to generate a JSONL file with synthetic data
 def generate_jsonl_file(file_index, data, output_dir, number_of_rows):
     output_path = Path(output_dir) / f"synthetic_file_{file_index}.jsonl"
-    data_for_file = trim_data(data, file_index, number_of_rows)
+    data_for_file = data
     # Write the JSON Lines data to a file
     with open(output_path, "w") as f:
         for row in data_for_file:
@@ -190,6 +190,7 @@ def generate_data(
         if file_type == "csv":
             generate_csv_file(j, data, output_dir, rows_per_file)
         else:
+            print(rows_per_file)
             generate_jsonl_file(j, data, output_dir, rows_per_file)
 
     typer.echo("Synthetic data generation complete.")
