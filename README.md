@@ -368,20 +368,23 @@ aws-vault exec your-profile-name
 then, we just need to edit our destinations for our pipelines:
 
 ```python
-destination_fs = dlt_destinations.filesystem(bucket_url="s3://gw-dlt/{your_name}/raw_history/")
+destination_fs = dlt_destinations.filesystem(bucket_url="s3://dlt-workshop/{your_name}/raw_history/")
 ```
 ```python
 example_pipeline_2 = dlt.pipeline(
     pipeline_name="test_pipeline_2",
     dataset_name="synthetic_nonsense_duckdb_data",
-    destination="athena"
-    staging=dlt_destinations.filesystem("s3://gw-dlt/{your_name}/athena_stg")
+    destination=dlt_destinations.athena(
+        query_result_bucket="s3://mojap-athena-query-dump-sandbox/",
+        force_iceberg=True
+    )
+    staging=dlt_destinations.filesystem("s3://dlt-workshop/{your_name}/athena_stg")
 )
 
 example_pipeline_2.run(
     read_json_parquet_from_local_filesystem(
         "synthetic",
-        "s3://gw-dlt/{your_name}/raw_history/",
+        "s3://dlt-workshop/{your_name}/raw_history/",
         "*.parquet"
     ),
 )
@@ -389,3 +392,4 @@ example_pipeline_2.run(
 
 
 ## Step Eight: Replicate all of this using moj-dlt and a yaml file
+
