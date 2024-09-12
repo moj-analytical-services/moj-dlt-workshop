@@ -237,9 +237,9 @@ Now we want to output in a SQL format, so let us create a second pipeline to a d
 This is going to mostly be the same as before, except we're going to edit our filesystem to include reading of our (newly written) parquet files.
 
 ```python
-from .filesystem import _read_jsonl, _read_parquet, filesystem
+from filesystem.readers import _read_jsonl, _read_parquet
 
-@dlt.source(_impl_cls=ReadersSource, spec=FilesystemConfigurationResource)
+@dlt.source
 def read_json_parquet_from_local_filesystem(
     table_name: str,
     folder_name: str,
@@ -263,15 +263,11 @@ and now a new example pipeline:
 example_pipeline_2 = dlt.pipeline(
     pipeline_name="test_pipeline_2",
     dataset_name="synthetic_nonsense_duckdb_data",
-    destination=duckdb(path="test_data.duckdb")
+    destination=dlt_destinations.duckdb(path="test_data.duckdb")
 )
 
 example_pipeline_2.run(
-    read_json_parquet_from_local_filesystem(
-        your_table_name,
-        your_parquet_folder_name,
-        your_parquet_file_name
-    ),
+    read_json_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
 )
 ```
 again running:
@@ -345,11 +341,7 @@ for the second pipeline, we need to run it based on a custom column that dlt add
 To do that:
 
 ```python
-parquet_source = read_json_parquet_from_local_filesystem(
-        your_table_name,
-        your_parquet_folder_name,
-        your_parquet_file_name
-    )
+parquet_source = read_json_parquet_from_local_filesystem("synthetic", "raw_history", "*.parquet")
 for source in parquet_source.resources:
     run_source.resources[source].apply_hints(
         incremental=dlt.sources.incremental("_dlt_load_id")
@@ -382,14 +374,15 @@ destination_fs = dlt_destinations.filesystem(bucket_url="s3://gw-dlt/{your_name}
 example_pipeline_2 = dlt.pipeline(
     pipeline_name="test_pipeline_2",
     dataset_name="synthetic_nonsense_duckdb_data",
-    destination=dlt_destinations.athena(staging="s3://gw-dlt/{your_name}/athena_stg")
+    destination="athena"
+    staging=dlt_destinations.filesystem("s3://gw-dlt/{your_name}/athena_stg")
 )
 
 example_pipeline_2.run(
     read_json_parquet_from_local_filesystem(
         "synthetic",
         "s3://gw-dlt/{your_name}/raw_history/",
-        "*.parquet*"
+        "*.parquet"
     ),
 )
 ```
