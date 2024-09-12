@@ -384,7 +384,7 @@ example_pipeline_2 = dlt.pipeline(
 )
 
 example_pipeline_2.run(
-    read_json_parquet_from_local_filesystem(
+    read_parquet_from_local_filesystem(
         "synthetic",
         "s3://dlt-workshop/{your_name}/raw_history/",
         "*.parquet"
