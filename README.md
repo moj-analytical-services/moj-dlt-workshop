@@ -375,7 +375,7 @@ destination_fs = dlt_destinations.filesystem(bucket_url="s3://dlt-workshop/{your
 ```python
 example_pipeline_2 = dlt.pipeline(
     pipeline_name="test_pipeline_2",
-    dataset_name="synthetic_nonsense_duckdb_data",
+    dataset_name="synthetic_nonsense_{your_name}_data",
     destination=dlt_destinations.athena(
         query_result_bucket="s3://mojap-athena-query-dump-sandbox/",
         force_iceberg=True
