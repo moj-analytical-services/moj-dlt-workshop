@@ -44,7 +44,7 @@ data_pipeline_with_schema = dlt.pipeline(
         bucket_url="./evaluation/enforce_contract/data"
     ),
     dataset_name="customer_data",
-    import_schema_path="./evaluation/enforce_contract/schemas/import",
+    import_schema_path="./evaluation/enforce_contract/schemas/export",
 )
 
 
