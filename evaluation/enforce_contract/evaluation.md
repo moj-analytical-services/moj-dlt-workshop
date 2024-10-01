@@ -70,3 +70,9 @@ Here is what `dlt` inferred from our pipeline:
     write_disposition: append
     resource: load_data_from_source
 ```
+
+## To test
+
+```bash
+poetry run python3 evaluation/enforce_contract/enforce_contract.py
+```
