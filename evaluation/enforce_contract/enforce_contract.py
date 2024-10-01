@@ -1,18 +1,13 @@
 import dlt
-
-from dlt.common.schema import Schema
-from dlt.common.validation import validate_dict
-from dlt.common.schema.typing import TDataItem
+from dlt.common.typing import TDataItem
 
 
-# Define a schema with contract enforcement
 @dlt.resource(write_disposition="append")
 def load_data_from_source() -> TDataItem:
     # Sample JSON data from an API or file
     data = [
         {"id": 1, "name": "John Doe", "email": "john@example.com", "age": 30},
         {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "age": 25},
-        {"id": 3, "name": "Mike Brown", "email": None, "age": 40},  # Invalid data
     ]
 
     # Here the contract schema ensures the fields have the right types
@@ -20,56 +15,39 @@ def load_data_from_source() -> TDataItem:
         yield record
 
 
-# Define a schema contract with data types and nullable enforcement
-schema = Schema(name="customer_data")
-
-# Add contract for schema fields
-schema.add_table(
-    "customers", {
-        "id": {"type": "bigint", "nullable": False},  # Must have id
-        "name": {"type": "string", "nullable": False},  # Must have a name
-        "email": {"type": "string", "nullable": True},  # Email is optional
-        "age": {"type": "integer", "nullable": False}  # Age must be present
-    }
-)
-
-
-# Apply schema contract on the resource data
-@dlt.pipeline(
-    destination="duckdb",  # Load data to PostgreSQL
+# Export inferred schema contract on the resource data
+data_pipeline = dlt.pipeline(
+    destination=dlt.destinations.filesystem(
+        bucket_url="./evaluation/enforce_contract/data"
+    ),
     dataset_name="customer_data",  # Dataset name in the destination
-    schema=schema,  # Enforce the schema we defined
+    export_schema_path="./evaluation/enforce_contract/schemas/export",
 )
-def data_pipeline():
-    # Load data into the pipeline
-    return load_data_from_source()
 
 
-# Function to fix or handle invalid data based on schema contract
-def validate_record(record):
-    try:
-        # Check if required fields are present
-        validate_dict(record, schema)
-        return record
-    except Exception as e:
-        print(f"Error in record {record}: {str(e)}")
-        raise e
-
-
-# Modify the data pipeline to validate records
+# Sample wrong JSON data from an API or file
 @dlt.resource(write_disposition="append")
-def load_data_with_validation() -> TDataItem:
-    data = load_data_from_source()  # Fetch data
-
+def load_incorrect_data_from_source() -> TDataItem:
+    data = [
+        {"id": 2, "name": "Jane Smith", "email": 1234, "age": "25"},
+    ]
     for record in data:
-        yield validate_record(record)
+        yield record
 
 
 # Use the validation-aware resource in the pipeline
-@dlt.pipeline(
-    destination="duckdb",
+data_pipeline_with_schema = dlt.pipeline(
+    destination=dlt.destinations.filesystem(
+        bucket_url="./evaluation/enforce_contract/data"
+    ),
     dataset_name="customer_data",
-    schema=schema,
+    import_schema_path="./evaluation/enforce_contract/schemas/import",
 )
-def validated_data_pipeline():
-    return load_data_with_validation()
+
+
+if __name__ == "__main__":
+    first_load_info = data_pipeline.run(load_data_from_source())
+    print(first_load_info)
+    second_load_info = data_pipeline_with_schema.run(
+        load_incorrect_data_from_source(), schema_contract={"tables": "freeze"}
+    )
