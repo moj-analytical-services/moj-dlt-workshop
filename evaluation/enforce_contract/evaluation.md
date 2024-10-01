@@ -45,3 +45,28 @@ except (DataValidationError, PipelineStepFailed) as e:
 ```
 
 This will try to load the pipeline into the correct destination, but if the table is different, it will load it to a fail destination.
+
+
+## Schema
+[`dlt` has some guidance on schemas](https://dlthub.com/docs/general-usage/schema), and there are a lot of options for properties you can define.
+
+Here is what `dlt` inferred from our pipeline:
+
+```yaml
+ load_data_from_source:
+    columns:
+      id:
+        data_type: bigint
+        nullable: true
+      name:
+        data_type: text
+        nullable: true
+      email:
+        data_type: text
+        nullable: true
+      age:
+        data_type: bigint
+        nullable: true
+    write_disposition: append
+    resource: load_data_from_source
+```
