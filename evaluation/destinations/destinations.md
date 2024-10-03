@@ -10,7 +10,7 @@ python3 evaluation/destinations/destinations.py
 ``` 
 
 ## Check loaded data
-Once the data has been loaded to all 3 locations we can compare the tables. 
+Once the data has been loaded to all 3 locations we can compare the tables. You may need to update the query dump bucket for this to work.
 ```bash
 python3 evaluation/destinations/check_tables.py
 ```
