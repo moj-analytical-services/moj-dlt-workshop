@@ -7,7 +7,7 @@ import boto3
 # import os
 # os.environ["ATHENA_QUERY_DUMP_BUCKET"] = "mojap-athena-query-dump-sandbox"
 
-print("Checking tables are equal")
+print("Checking tables are equal...")
 
 # load latest uploaded S3 file in bucket
 s3 = boto3.client('s3')
