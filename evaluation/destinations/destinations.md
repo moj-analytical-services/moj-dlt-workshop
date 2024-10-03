@@ -1,5 +1,4 @@
 # Loading to different destinations
-
 One of the many benefits of `dlt` is the ease with which data can be loaded to different destinations. We want to test that the loaded data across destinations is identical. In this instance we are comparing data which is loaded directly to S3, loaded directly to a standard Athena table and finally data loaded to an Athena Iceberg table with partitioning.
 
 ## Setup
@@ -21,7 +20,6 @@ One difference to flag is that when tables are loaded using `pydbtools` and `aws
 We then check if the loaded tables are equal. The output tells us that the data loaded to each destination is identical.
 
 ## To test
-
 ```bash
 aws-vault exec {sandbox account}
 python3 evaluation/destinations/destinations.py
