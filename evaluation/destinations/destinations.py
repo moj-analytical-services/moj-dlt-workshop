@@ -19,7 +19,7 @@ data_items = [
 
 
 # define sample data as a dlt resource
-@dlt.resource()
+@dlt.resource(write_disposition='replace')
 def destination_data():
     yield [{"id": i, "category": c, "created_at": d} for i, c, d in data_items]
 

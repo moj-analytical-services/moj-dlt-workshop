@@ -1,21 +1,39 @@
 # test that loaded tables are equal
 import pydbtools as pydb
 import awswrangler as wr
+import boto3
 
 # import os
-
 # update this in pydbtools.utils because it's not overriding it for some reason
 # os.environ["ATHENA_QUERY_DUMP_BUCKET"] = "mojap-athena-query-dump-sandbox"
 
-### update if loading new data directly to S3
-s3_json_file = "s3://dlt-workshop/guy/s3_destination/s3_pipeline_dataset/destination_data/1727949349.8698199.20ce893c02.jsonl"
+print("Checking tables are equal")
 
-# load in raw file loaded to s3
-df_s3 = wr.s3.read_json(
-    s3_json_file,
-    compression="gzip",
-    lines=True,
-)
+# load latest uploaded S3 file in bucket
+s3 = boto3.client('s3')
+
+# Specify the bucket name and optional prefix
+bucket_name = 'dlt-workshop'
+prefix = 'guy/s3_destination/s3_pipeline_dataset/destination_data'
+
+# List objects in the bucket
+response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+
+# Get the list of all objects sorted by last modified date in descending order
+if 'Contents' in response:
+    all_files = response['Contents']
+    latest_file = max(all_files, key=lambda x: x['LastModified'])['Key']
+
+    # Load the latest file
+    s3_path = f"s3://{bucket_name}/{latest_file}"
+    df_s3 = wr.s3.read_json(
+        s3_path,
+        compression="gzip",
+        lines=True,
+    )
+else:
+    print("No files found in the bucket.")
+
 print("S3 table:")
 print(df_s3.head())
 
@@ -59,6 +77,7 @@ def standardize_df(df):
 df_s3_std = standardize_df(df_s3)
 df_athena_std = standardize_df(df_athena)
 df_iceberg_std = standardize_df(df_iceberg)
+
 
 # compare
 s3_equal_to_athena = df_s3_std.equals(df_athena_std)
