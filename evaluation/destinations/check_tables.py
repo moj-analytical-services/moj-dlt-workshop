@@ -3,8 +3,8 @@ import pydbtools as pydb
 import awswrangler as wr
 import boto3
 
-# import os
 # update this in pydbtools.utils because it's not overriding it for some reason
+# import os
 # os.environ["ATHENA_QUERY_DUMP_BUCKET"] = "mojap-athena-query-dump-sandbox"
 
 print("Checking tables are equal")
