@@ -13,7 +13,7 @@ Once the data has been loaded to all 3 locations we can compare the tables. You 
 ```bash
 python3 evaluation/destinations/check_tables.py
 ```
-This loads each of the loaded tables, prints a sample extract from each of them and looks at the Table DDL for the Athena tables to ensure that they're correctly defined and that the Iceberg table is partitioned correctly.
+This loads each of the tables, prints a sample extract from each of them and looks at the Table DDL for the Athena tables to ensure that they're correctly defined and that the Iceberg table is partitioned correctly.
 
 One difference to flag is that when tables are loaded using `pydbtools` and `awswrangler`, the datatypes for each column are slightly different. We cast all columns to strings to compare only the values of each table. Additionally, we remove the dlt metadata columns as the values here will be unique to each load.
 
