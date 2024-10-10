@@ -6,16 +6,12 @@ from dlt.sources.filesystem import filesystem, read_parquet
 
 scale = 1
 
-@dlt.resource(parallelized=True)
-def dlt_source():
-    source_data = filesystem(
+fs_resource = dlt.resource(
+    filesystem(
         bucket_url=f"s3://tpcds-ireland/tpcds/scale={scale}/table=store_sales/",
         file_glob="*.parquet",
-    ) | read_parquet(chunksize=100000)
-    while item_slice := list(islice(source_data, 100000)):
-        print(f"got chunk of length {len(item_slice)}")
-        yield item_slice
-
+    ) | read_parquet()
+)
 
 dlt_destination = destination_filesystem(bucket_url=f"./tpcds-local/dlt/scale={scale}/")
 
@@ -24,9 +20,9 @@ dlt_pipeline = dlt.pipeline(
     dataset_name=f"tpcds-{scale}",
     destination=dlt_destination,
     dev_mode=True,
-    progress="tqdm",
+    progress='tqdm'
 )
 
-load_info = dlt_pipeline.run(dlt_source(), write_disposition="replace")
+load_info = dlt_pipeline.run(fs_resource)
 
 print(load_info)

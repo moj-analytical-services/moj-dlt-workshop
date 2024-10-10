@@ -1,0 +1,2 @@
+[sources.data_writer]
+file_max_items=100000
