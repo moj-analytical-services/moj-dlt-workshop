@@ -1,2 +1,13 @@
-[sources.data_writer]
-file_max_items=100000
+[extract]
+workers = 8  
+max_parallel_items = 20  
+ 
+[data_writer]
+file_max_items = 500000  
+file_max_bytes = 10000000  
+ 
+[normalize]
+workers = 4  
+ 
+[load]
+workers = 16
