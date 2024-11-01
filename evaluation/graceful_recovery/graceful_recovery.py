@@ -12,11 +12,11 @@ def run_pipeline(should_fail=True):
         pipeline_name='test_pipeline',
         destination='duckdb',
         dataset_name='test_dataset',
-        dev_mode=False
+        #dev_mode=False
     )
 
     try:
-        info = pipeline.run(failing_resource(should_fail=should_fail))
+        info = pipeline.run(failing_resource(should_fail=should_fail),write_disposition='append')
         print(f"INFO: {info}")
         print(f"Pipeline run completed successfully with should_fail={should_fail}")
     except Exception as e:
@@ -24,8 +24,8 @@ def run_pipeline(should_fail=True):
 
 
 if __name__ == "__main__":
-    # print("Intentional Failure")
-    # run_pipeline(should_fail=True)
+    print("Intentional Failure")
+    run_pipeline(should_fail=True)
 
-    print("Successful Completion")
-    run_pipeline(should_fail=False)
+    # print("Successful Completion")
+    # run_pipeline(should_fail=False)
