@@ -1,19 +1,16 @@
-[tool.poetry]
+[project]
 name = "moj-dlt-workshop"
-package-mode = false
+version = "0.1.0"
+description = "Add your description here"
 readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.39.12",
+    "cloudpathlib>=0.21.1",
+    "dlt[parquet]>=1.14.1",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.12,<3.13"
-typer = "^0.12.5"
-pathlib = "^1.0.1"
-dlt = {extras = ["athena"], version = "^1.1.0"}
-duckdb = "^1.1.0"
-ipykernel = "^6.29.5"
-pyarrow = "^17.0.0"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
- 
+[dependency-groups]
+test = [
+    "pytest>=8.4.1",
+]
