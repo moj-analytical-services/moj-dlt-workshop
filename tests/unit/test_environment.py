@@ -4,7 +4,7 @@ import cloudpathlib
 import pytest
 from botocore.exceptions import NoCredentialsError
 
-from airflow_load_em_data.load_em_data.utils import (
+from python_apps.environment import (
     Environment,
     extract_delivery_date_from_file,
     extract_feed_type_from_file,
